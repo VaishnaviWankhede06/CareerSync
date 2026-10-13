@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri";
 import cloudinary from "../utils/cloudinary";
 import { Request, Response } from "express";
-import bcryptjs from "bcryptjs";
 
 interface RequestWithId extends Request {
   id?: string;

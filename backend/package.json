@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm run backend\" \"npm run client\"",
     "data:import": "node backend/seeder.js -i",
     "data:destroy": "node backend/seeder.js -d",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
