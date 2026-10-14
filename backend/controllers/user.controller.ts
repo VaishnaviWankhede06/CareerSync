@@ -99,44 +99,102 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       expiresIn: "1hr",
     });
 
-    user.token = token;
+    // user.token = token;
+
+    // return res
+    //   .status(200)
+    //   .cookie("token", token, {
+    //     maxAge: 60 * 60 * 1000,
+    //     httpOnly: true,
+    //     sameSite: "strict",
+    //   })
+    //   .cookie("userId", user._id.toString(), {
+    //     maxAge: 60 * 60 * 1000,
+    //     httpOnly: true, // Set to true if you want it to be accessible only by the server
+    //     sameSite: "strict",
+    //   })
+    //   .json({
+    //     message: `Welcome back ${user.fullname}`,
+    //     user: user.toObject(),
+    //     success: true,
+    //   });
+
+
+    
+    const cookieOptions = {
+      maxAge: 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none" as const,
+    };
 
     return res
       .status(200)
-      .cookie("token", token, {
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .cookie("userId", user._id.toString(), {
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true, // Set to true if you want it to be accessible only by the server
-        sameSite: "strict",
-      })
+      .cookie("token", token, cookieOptions)
+      .cookie("userId", user._id.toString(), cookieOptions)
       .json({
         message: `Welcome back ${user.fullname}`,
-        user: user.toObject(),
+        user: {
+          _id: user._id,
+          fullname: user.fullname,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          profile: user.profile,
+        },
         success: true,
       });
+
+
   } catch (error) {
     console.log(error);
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<any> => {
+// export const logout = async (req: Request, res: Response): Promise<any> => {
+//   try {
+//     return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+//       message: "Logged out successfully.",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Logout Error:", error); // Log the error
+//     return res.status(500).json({
+//       message: "Could not log out",
+//       success: false,
+//     });
+//   }
+// };
+
+
+export const logout = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logged out successfully.",
-      success: true,
-    });
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none" as const,
+    };
+
+    return res
+      .status(200)
+      .clearCookie("token", cookieOptions)
+      .clearCookie("userId", cookieOptions)
+      .json({
+        message: "Logged out successfully.",
+        success: true,
+      });
   } catch (error) {
-    console.error("Logout Error:", error); // Log the error
+    console.error("Logout Error:", error);
     return res.status(500).json({
       message: "Could not log out",
       success: false,
     });
   }
 };
+
 
 export const updateProfile = async (
   req: RequestWithId,
