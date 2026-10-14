@@ -15,26 +15,49 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // const logoutHandler = async () => {
+  //   try {
+  //     const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+  //       withCredentials: true,
+  //     });
+  //     if (res.data.success) {
+  //       dispatch(setUser(null));
+  //       navigate("/");
+  //       toast.success(res.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Network Error:", error); // Log network errors
+  //     if (error.response) {
+  //       console.error("Error Response:", error.response); // Log the error response
+  //       toast.error(error.response.data.message);
+  //     } else {
+  //       toast.error("Network error, please try again later.");
+  //     }
+  //   }
+  // };
+
+
   const logoutHandler = async () => {
-    try {
-      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-        withCredentials: true,
-      });
-      if (res.data.success) {
-        dispatch(setUser(null));
-        navigate("/");
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      console.error("Network Error:", error); // Log network errors
-      if (error.response) {
-        console.error("Error Response:", error.response); // Log the error response
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Network error, please try again later.");
-      }
+  try {
+    const res = await axios.get(
+      `${USER_API_END_POINT}/logout`,
+      { withCredentials: true }
+    );
+
+    if (res.data.success) {
+      dispatch(setUser(null));
+      navigate("/");
+      toast.success(res.data.message);
     }
-  };
+  } catch (error) {
+    console.error("Logout Error:", error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Logout failed. Please try again."
+    );
+  }
+};
 
   return (
     <div className="sticky shadow-md top-0 z-50 bg-white">
@@ -92,52 +115,114 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src={user?.profile?.profilePhoto}
-                    alt="@shadcn"
-                  />
-                </Avatar>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="">
-                  <div className="flex gap-2 space-y-2">
-                    <Avatar className="cursor-pointer">
-                      <AvatarImage
-                        src={user?.profile?.profilePhoto}
-                        alt="@shadcn"
-                      />
-                    </Avatar>
-                    <div>
-                      <h4 className="font-medium">{user?.fullname}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {user?.profile?.bio}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col my-2 text-gray-600">
-                    {user && user.role === "student" && (
-                      <div className="flex w-fit items-center gap-2 cursor-pointer">
-                        <User2 />
-                        <Button variant="link">
-                          {" "}
-                          <Link to="/profile">View Profile</Link>
-                        </Button>
-                      </div>
-                    )}
+            // <Popover>
+            //   <PopoverTrigger asChild>
+            //     <Avatar className="cursor-pointer">
+            //       <AvatarImage
+            //         src={user?.profile?.profilePhoto}
+            //         alt="@shadcn"
+            //       />
+            //     </Avatar>
+            //   </PopoverTrigger>
+            //   <PopoverContent className="w-80">
+            //     <div className="">
+            //       <div className="flex gap-2 space-y-2">
+            //         <Avatar className="cursor-pointer">
+            //           <AvatarImage
+            //             src={user?.profile?.profilePhoto}
+            //             alt="@shadcn"
+            //           />
+            //         </Avatar>
+            //         <div>
+            //           <h4 className="font-medium">{user?.fullname}</h4>
+            //           <p className="text-sm text-muted-foreground">
+            //             {user?.profile?.bio}
+            //           </p>
+            //         </div>
+            //       </div>
+            //       <div className="flex flex-col my-2 text-gray-600">
+            //         {user && user.role === "student" && (
+            //           <div className="flex w-fit items-center gap-2 cursor-pointer">
+            //             <User2 />
+            //             <Button variant="link">
+            //               {" "}
+            //               <Link to="/profile">View Profile</Link>
+            //             </Button>
+            //           </div>
+            //         )}
 
-                    <div className="flex w-fit items-center gap-2 cursor-pointer">
-                      <LogOut />
-                      <Button onClick={logoutHandler} variant="link">
-                        Logout
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+            //         <div className="flex w-fit items-center gap-2 cursor-pointer">
+            //           <LogOut />
+            //           <Button onClick={logoutHandler} variant="link">
+            //             Logout
+            //           </Button>
+            //         </div>
+            //       </div>
+            //     </div>
+            //   </PopoverContent>
+            // </Popover>
+
+
+            <Popover>
+  <PopoverTrigger asChild>
+    <Avatar className="cursor-pointer">
+      <AvatarImage
+        src={user?.profile?.profilePhoto}
+        alt={user?.fullname || "Profile"}
+      />
+    </Avatar>
+  </PopoverTrigger>
+
+  <PopoverContent className="w-80">
+    <div>
+      {/* User Information */}
+      <div className="flex items-center gap-3">
+        <Avatar>
+          <AvatarImage
+            src={user?.profile?.profilePhoto}
+            alt={user?.fullname || "Profile"}
+          />
+        </Avatar>
+
+        <div className="min-w-0">
+          <h4 className="font-medium">
+            {user?.fullname}
+          </h4>
+          <p className="text-sm text-muted-foreground break-words">
+            {user?.profile?.bio || user?.email}
+          </p>
+        </div>
+      </div>
+
+      {/* Student Profile Link */}
+      {user?.role === "student" && (
+        <div className="flex items-center gap-2 mt-3">
+          <User2 className="h-5 w-5" />
+
+          <Button variant="link" asChild>
+            <Link to="/profile">
+              View Profile
+            </Link>
+          </Button>
+        </div>
+      )}
+
+      {/* Logout - Both Student and Recruiter */}
+      <div className="flex items-center gap-2 mt-3 border-t pt-3">
+        <LogOut className="h-5 w-5 text-red-600" />
+
+        <Button
+          variant="link"
+          className="text-red-600"
+          onClick={logoutHandler}
+        >
+          Logout
+        </Button>
+      </div>
+    </div>
+  </PopoverContent>
+</Popover>
+
           )}
         </div>
       </div>
