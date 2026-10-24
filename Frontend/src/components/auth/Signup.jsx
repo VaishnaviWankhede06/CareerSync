@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import Footer from "../shared/Footer";
 import { Label } from "../ui/label";
@@ -20,7 +20,7 @@ const Signup = () => {
     phoneNumber: "",
     password: "",
     role: "",
-    file: "",
+    
   });
   const { loading, user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
@@ -29,38 +29,74 @@ const Signup = () => {
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
-  const changeFileHandler = (e) => {
-    setInput({ ...input, file: e.target.files?.[0] });
-  };
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(); //formdata object
-    formData.append("fullname", input.fullname);
-    formData.append("email", input.email);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("password", input.password);
-    formData.append("role", input.role);
-    if (input.file) {
-      formData.append("file", input.file);
-    }
+  // const changeFileHandler = (e) => {
+  //   setInput({ ...input, file: e.target.files?.[0] });
+  // };
+  // const submitHandler = async (e) => {
+  //   e.preventDefault();
+  //   const formData = new FormData(); //formdata object
+  //   formData.append("fullname", input.fullname);
+  //   formData.append("email", input.email);
+  //   formData.append("phoneNumber", input.phoneNumber);
+  //   formData.append("password", input.password);
+  //   formData.append("role", input.role);
+  //   if (input.file) {
+  //     formData.append("file", input.file);
+  //   }
 
-    try {
-      dispatch(setLoading(true));
-      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+  //   try {
+  //     dispatch(setLoading(true));
+  //     const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //       withCredentials: true,
+  //     });
+  //     if (res.data.success) {
+  //       navigate("/login");
+  //       toast.success(res.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.response.data.message);
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //   }
+  // };
+
+  
+const submitHandler = async (e) => {
+  e.preventDefault();
+
+  try {
+    dispatch(setLoading(true));
+
+    const res = await axios.post(
+      `${USER_API_END_POINT}/register`,
+      {
+        fullname: input.fullname,
+        email: input.email,
+        phoneNumber: input.phoneNumber,
+        password: input.password,
+        role: input.role,
+      },
+      {
         withCredentials: true,
-      });
-      if (res.data.success) {
-        navigate("/login");
-        toast.success(res.data.message);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response.data.message);
-    } finally {
-      dispatch(setLoading(false));
+    );
+
+    if (res.data.success) {
+      toast.success(res.data.message);
+      navigate("/login");
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message || "Registration failed."
+    );
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
   useEffect(() => {
     if (user) {
@@ -141,7 +177,7 @@ const Signup = () => {
                 <Label htmlFor="r2">Recruiter</Label>
               </div>
             </RadioGroup>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Label>Profile</Label>
               <Input
                 accept="image/*"
@@ -149,7 +185,7 @@ const Signup = () => {
                 onChange={changeFileHandler}
                 className="cursor-pointer"
               />
-            </div>
+            </div> */}
           </div>
           {loading ? (
             <Button className="w-full my-4">

@@ -1,0 +1,7 @@
+import { io } from "socket.io-client";
+import { BACKEND_URL } from "@/utils/constant";
+
+export const socket = io(BACKEND_URL, {
+  autoConnect: false,
+  withCredentials: true,
+});

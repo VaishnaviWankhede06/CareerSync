@@ -10,6 +10,7 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "sonner";
 
+
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
@@ -95,6 +96,12 @@ const Navbar = () => {
                 <li className="text-black hover:text-purple-800">
                   <Link to="/aboutus">About Us</Link>
                 </li>
+                 <li className="text-black hover:text-purple-800">
+                  <Link to="/appliedjobs">Applied Jobs</Link>
+                </li>
+                <li className="text-black hover:text-purple-800">
+                  <Link to="/notification">Notification</Link>
+                </li>
               </>
             )}
           </ul>
@@ -164,14 +171,31 @@ const Navbar = () => {
 
 
             <Popover>
-  <PopoverTrigger asChild>
+  {/* <PopoverTrigger asChild>
     <Avatar className="cursor-pointer">
       <AvatarImage
         src={user?.profile?.profilePhoto}
         alt={user?.fullname || "Profile"}
       />
     </Avatar>
-  </PopoverTrigger>
+  </PopoverTrigger> */}
+
+  
+
+  <PopoverTrigger asChild>
+  <button
+    type="button"
+    className="flex-shrink-0 rounded-full border-2 border-purple-600"
+  >
+    <Avatar className="h-10 w-10 cursor-pointer">
+      <AvatarImage
+        src={user?.profile?.profilePhoto}
+        alt={user?.fullname || "Profile"}
+      />
+      <User2 className="h-6 w-6" />
+    </Avatar>
+  </button>
+</PopoverTrigger>
 
   <PopoverContent className="w-80">
     <div>
